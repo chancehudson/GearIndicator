@@ -1,0 +1,9 @@
+Package: com.chancehudson.gearindicator
+Name: GearIndicator
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Chance Hudson
+Author: Chance Hudson
+Section: Tweaks
