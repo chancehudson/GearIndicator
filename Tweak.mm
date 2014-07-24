@@ -32,7 +32,6 @@ int getGear(double approx);
 
 %new(v@:)
 -(void)calculateAndUpdateGear{
-	NSLog(@"fshdajfhalskjfhalsjhdfljka");
 	UILabel *bigGear = (UILabel*)[self.view viewWithTag:BIG_TAG];
 	UILabel *smallGear = (UILabel*)[self.view viewWithTag:SMALL_TAG];
 	double cadence = [self.cadenceDynamicLabel.text floatValue];
