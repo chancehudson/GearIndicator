@@ -47,21 +47,23 @@ int getGear(double approx);
 }
 
 -(void)viewDidLoad{
-	UILabel *bigGearLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.speedDynamicLabel.frame.origin.x+self.speedDynamicLabel.frame.size.width-25,150,50,50)];
+	CGPoint origin = [self.speedDynamicLabel.superview convertPoint:self.speedDynamicLabel.frame.origin toView:self.view];
+	float x = origin.x+self.speedDynamicLabel.frame.size.width-35;
+	UILabel *bigGearLabel = [[UILabel alloc] initWithFrame:CGRectMake(x,origin.y,50,50)];
 	bigGearLabel.text = @"-";
 	bigGearLabel.textColor = [UIColor blackColor];
 	bigGearLabel.textAlignment = NSTextAlignmentCenter;
 	bigGearLabel.tag = BIG_TAG;
-	bigGearLabel.font = [UIFont systemFontOfSize:20];
+	bigGearLabel.font = [UIFont systemFontOfSize:25];
 	[self.view addSubview:bigGearLabel];
 	[bigGearLabel release];
 
-	UILabel *smallGearLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.speedDynamicLabel.frame.origin.x+self.speedDynamicLabel.frame.size.width-25,175,50,50)];
+	UILabel *smallGearLabel = [[UILabel alloc] initWithFrame:CGRectMake(x,origin.y+self.speedDynamicLabel.frame.size.height-50,50,50)];
 	smallGearLabel.text = @"-";
 	smallGearLabel.textColor = [UIColor blackColor];
 	smallGearLabel.textAlignment = NSTextAlignmentCenter;
 	smallGearLabel.tag = SMALL_TAG;
-	smallGearLabel.font = [UIFont systemFontOfSize:20];
+	smallGearLabel.font = [UIFont systemFontOfSize:25];
 	[self.view addSubview:smallGearLabel];
 	[smallGearLabel release];
 	%orig;
