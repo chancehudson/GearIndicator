@@ -4,6 +4,8 @@
 
 #import "Fitness/FullWorkoutPageVC.h"
 #import "Fitness/SimpleWorkoutPageVC.h"
+#import "Fitness/WFWorkoutWidgetVC.h"
+#import "Fitness/WFSession.h"
 
 #define C 82.5197 //tire circumference in inches (2.096 meters)
 #define BIG_TAG 14282838
@@ -13,14 +15,27 @@
 -(void)calculateAndUpdateGear;
 @end
 
+@interface WFWorkoutWidgetVC (AutoPause)
+-(void)autoPause;
+-(void)autoResume;
+@end
+
 double bigRing = 52;
 double smallRing = 42;
 int cogCount = 9;
 //double cogs[9] = {12,13,14,15,17,19,21,23,25};
 double cogs[9] = {25,23,21,19,17,15,14,13,12};
 
+int minCadence = 50;
+
 int getGear(double approx);
-	
+
+//auto pause
+double currentSpeed = 0;
+BOOL isAutoPaused = NO;
+WFWorkoutWidgetVC *sharedWorkoutVC = nil;
+double minSpeed = 5.0;
+
 %hook SimpleWorkoutPageVC
 //the main workout page that I use
 //the only page that i want to put the gear on
@@ -30,13 +45,22 @@ int getGear(double approx);
 	[self calculateAndUpdateGear];
 }
 
+//handle gear indicator
 %new(v@:)
 -(void)calculateAndUpdateGear{
+	currentSpeed = [self.speedDynamicLabel.text floatValue];
+	if(currentSpeed < minSpeed){
+		[sharedWorkoutVC autoPause];
+	}
+	else{
+		[sharedWorkoutVC autoResume];
+	}
+
 	UILabel *bigGear = (UILabel*)[self.view viewWithTag:BIG_TAG];
 	UILabel *smallGear = (UILabel*)[self.view viewWithTag:SMALL_TAG];
 	double cadence = [self.cadenceDynamicLabel.text floatValue];
-	double speed = [self.speedDynamicLabel.text floatValue];
-	if(cadence == 0 || speed == 0)
+	double speed = currentSpeed;
+	if(cadence <= minCadence || speed == 0)
 		return;
 	double temp = (cadence*C)/(speed*1056.0f);
 	// temp = (cog count/chainring count)
@@ -92,6 +116,43 @@ int getGear(double approx){
 	}
 	return nearest;
 }
+
+%hook WFWorkoutWidgetVC
+
+%new(v@:)
+-(void)autoPause{
+	//if workout state is 1 that means it's not paused
+	if(self.session.workoutState == 1){
+		isAutoPaused = YES;
+		[self startStopButtonTouched:nil];
+	}
+}
+
+%new(v@:)
+-(void)autoResume{
+	if(self.session.workoutState != 1 && isAutoPaused){
+		[self startStopButtonTouched:nil];
+	}
+}
+
+- (void)viewDidLoad{
+	%orig;
+	sharedWorkoutVC = self;
+}
+
+-(void)dealloc{
+	sharedWorkoutVC = nil;
+	%orig;
+}
+
+- (void)startStopButtonTouched:(id)arg1{
+	%orig;
+	if(self.session.workoutState == 1)
+		isAutoPaused = NO;
+}
+
+
+%end
 
 %ctor{
 	%init;

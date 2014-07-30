@@ -4,13 +4,11 @@
 //     class-dump is Copyright (C) 1997-1998, 2000-2001, 2004-2013 by Steve Nygard.
 //
 
-#import "NSManagedObject.h"
-
-#import "WFUDPBroadcastManagerDelegate.h"
+//#import "WFUDPBroadcastManagerDelegate.h"
 
 @class NSSet, UBERWorkoutProfile, WFSessionData, WFWorkout, WFWorkoutData;
 
-@interface WFSession : NSManagedObject <WFUDPBroadcastManagerDelegate>
+@interface WFSession : NSObject //NSManagedObject //<WFUDPBroadcastManagerDelegate>
 {
     WFSessionData *sessionData;
     WFWorkout *activeWorkout;
@@ -22,8 +20,8 @@
 + (void)initialize;
 @property(retain, nonatomic) UBERWorkoutProfile *workoutProfile; // @synthesize workoutProfile;
 @property(retain, nonatomic) WFWorkout *activeWorkout; // @synthesize activeWorkout;
-@property(nonatomic) __weak WFSessionData *sessionData; // @synthesize sessionData;
-- (void).cxx_destruct;
+@property(nonatomic, weak) __weak WFSessionData *sessionData; // @synthesize sessionData;
+
 - (void)shutdownSession;
 - (void)resetWorkoutAndCloseConnections;
 - (void)loadWorkoutProfile:(id)arg1;
